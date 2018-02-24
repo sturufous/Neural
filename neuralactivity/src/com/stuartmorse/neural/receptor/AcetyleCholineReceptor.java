@@ -4,6 +4,6 @@ package com.stuartmorse.neural.receptor;
  * @author Stuart Morse
  *
  */
-public interface AcetylCholineReceptor {
+public interface AcetyleCholineReceptor {
 
 }

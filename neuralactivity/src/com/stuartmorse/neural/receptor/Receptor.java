@@ -1,5 +1,7 @@
 package com.stuartmorse.neural.receptor;
 
+import com.stuartmorse.neural.exceptions.ReceptorStateException;
+
 /**
  * @author Stuart Morse
  *
@@ -7,6 +9,7 @@ package com.stuartmorse.neural.receptor;
 public abstract class Receptor {
 
 	private boolean bound = false;
+	private boolean blocked = false;
 
 	/**
 	 * @return
@@ -25,6 +28,20 @@ public abstract class Receptor {
 	 */
 	public void setBound(boolean bound) {
 		this.bound = bound;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isBlocked() {
+		return blocked;
+	};
+
+	/**
+	 * @param bound
+	 */
+	public void setBlocked(boolean bound) {
+		this.blocked = bound;
 	}
 
 }

@@ -17,5 +17,15 @@
 			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/Users/stuartmorse/.m2/repository/neuralactivity/neural/0.0.1/neural-0.0.1.jar">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="org.eclipse.jst.component.archivename" value="neural-0.0.1.jar"/>
+			<attribute name="maven.groupId" value="neuralactivity"/>
+			<attribute name="maven.artifactId" value="neural"/>
+			<attribute name="maven.version" value="0.0.1"/>
+			<attribute name="maven.scope" value="compile"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

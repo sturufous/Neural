@@ -1,7 +1,6 @@
 package com.stuartmorse.neural.neuron;
 
 import com.stuartmorse.neural.Concentration;
-import com.stuartmorse.neural.LigandType;
 import com.stuartmorse.neural.Voltage;
 
 /**
@@ -29,15 +28,19 @@ public class MetabotropicDendron extends Dendron {
 
 		double potential = Voltage.NILL_POTENTIAL.getValue();
 		double nucleotideConcentration = Concentration.NILL_CONCENTRATION.getValue();
-		double ligandConcentration = synapse.getLigandConcentration(LigandType.ACETYLCHOLINE);
+		
+		// TODO Modify for multiple ligand types.
 		double totalFlowPotential = Voltage.NILL_POTENTIAL.getValue();
 
+		// Returns the voltage resulting from activation of all bound receptors
 		for (Dendrite dendrite : dendrites) {
 			totalFlowPotential += dendrite.getFlowPotential();
 		}
 
-		nucleotideConcentration = (totalFlowPotential * ligandConcentration);
-		potential = nucleotideConcentration
+		// Nucleotide concentration is a function of totalFlowPotential so no need to include
+		// it when calculating potential here. Only need to consider how many GNG Ion Channels
+		// there are to enable Sodium Ion flow.
+		potential = totalFlowPotential
 				* (myNeuron.getExternalSodiumPotential()
 						* (cngIonChannelCount * 0.001))
 				+ Voltage.RESTING_POTENTIAL.getValue();
