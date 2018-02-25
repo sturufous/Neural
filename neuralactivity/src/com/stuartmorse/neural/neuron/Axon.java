@@ -52,7 +52,7 @@ public class Axon {
 				Synapse tailSynapse = terminal.getSynapse();
 				// Null here indicates end of neuron chain
 				if (tailSynapse != null) {
-					tailSynapse.fuseVesicles(spikeAmplitude);
+					tailSynapse.transduceSignal(spikeAmplitude);
 					Neuron myNeuron = tailSynapse.getNext();
 					if (myNeuron != null) {
 						myNeuron.epspController(tailSynapse);

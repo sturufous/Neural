@@ -1,5 +1,5 @@
 package com.stuartmorse.neural.therapeutics;
 
-public class Opioid implements OpioidAgonist {
+public class Opioid extends Therapeutic implements OpioidAgonist {
 
 }

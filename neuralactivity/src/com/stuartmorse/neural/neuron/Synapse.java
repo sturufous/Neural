@@ -6,10 +6,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.stuartmorse.neural.ChannelInteraction;
 import com.stuartmorse.neural.Concentration;
+import com.stuartmorse.neural.IonChannelType;
 import com.stuartmorse.neural.LigandType;
 import com.stuartmorse.neural.Voltage;
+import com.stuartmorse.neural.ionchannel.IonChannel;
 import com.stuartmorse.neural.receptor.Receptor;
+import com.stuartmorse.neural.therapeutics.GabaPentin;
 import com.stuartmorse.neural.therapeutics.ReceptorInteraction;
 import com.stuartmorse.neural.therapeutics.Therapeutic;
 
@@ -22,7 +26,10 @@ public class Synapse {
 	private final HashMap<LigandType, Double> ligandConcentrations = new HashMap<>();
 	private final Map<LigandType, Set<SynapticVesicle>> vesicles = new HashMap<>();
 	private final Map<LigandType, ArrayList<Receptor>> receptors = new HashMap<>();
+	private final Map<IonChannelType, ArrayList<IonChannel>> preSynaptic = new HashMap<>();
 	private final Map<Class<? extends Therapeutic>, Double> therapeuticConcentrations = new HashMap<>();
+	private final Map<Class<? extends Therapeutic>, Double> preSynapticConcentrations = new HashMap<>();
+	private final Map<Class<? extends Therapeutic>, Double> preSynapticTherapies = new HashMap<>();
 	private final Neuron prev;
 	private final Neuron next;
 
@@ -152,51 +159,110 @@ public class Synapse {
 			e.printStackTrace();
 		}
 	}
+	
+	public void addPreSynapticIonChannels(int count, IonChannelType channel, Class<? extends IonChannel> channelType) {
+		try {
+			ArrayList<IonChannel> ionChannels;
+			boolean channelsExistForIonType = false;
+
+			if (preSynaptic.containsKey(channel)) {
+				ionChannels = preSynaptic.get(channel);
+				channelsExistForIonType = true;
+			} else {
+				ionChannels = new ArrayList<IonChannel>();
+			}
+
+			for (int idx2 = 0; idx2 < count; idx2++) {
+				ionChannels.add(channelType.newInstance());
+			}
+
+			if (!channelsExistForIonType) {
+				preSynaptic.put(channel, ionChannels);
+			}
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 
 	/**
 	 * @param spikeAmplitude
 	 */
-	public void fuseVesicles(double spikeAmplitude) {
+	public void transduceSignal(double spikeAmplitude) {
 
-		double dischargeLevel = spikeAmplitude / Voltage.FIRING_THRESHOLD.getValue();
+		ArrayList<IonChannel> ionChannels = null;
+		
+		for (IonChannelType channelType : preSynaptic.keySet()) {
+			
+			ionChannels = preSynaptic.get(channelType);
+			int ionChannelCount = ionChannels.size();
+
+			try {
+				processChannelBasedTherapeutics(ionChannels);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		double calciumFlow = calculateCalciumFlow(ionChannels);
+		double dischargeLevel = (spikeAmplitude / Voltage.FIRING_THRESHOLD.getValue()) * calciumFlow;
 
 		// The ligand concentration is relative to the number of vesicles and
 		// spike amplitude. Attempt to propagate signal over synapse.
 		for (LigandType ligand : vesicles.keySet()) {
 			Set<SynapticVesicle> ligandVesicles = vesicles.get(ligand);
-			setLigandConcentration(ligand, ((double) ligandVesicles.size() / 10) * dischargeLevel);
-
+			
 			// Use matching ligand concentration to distribute bindings across receptor set.
 			ArrayList<Receptor> ligandReceptors = receptors.get(ligand);
 			int ligandReceptorCount = ligandReceptors.size();
-			double ligandConcentration = getLigandConcentration(ligand);
 
-			// BindingProbability contains the number of receptors to bind. This will ultimately
-			// be affected by the concentration of any ligand-related antagonists.
-			double numberToBind = ligandReceptorCount * ligandConcentration;
-			
 			try {
-				processTherapeutics(ligandReceptors, ligandReceptorCount);
+				processReceptorBasedTherapeutics(ligandReceptors);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
+			// BindingProbability contains the number of receptors to bind. This will ultimately
+			// be affected by the concentration of any ligand-related antagonists.
+			double ligandConcentration = ((double) ligandVesicles.size() / 10) * dischargeLevel;
+			double numberToBind = ligandReceptorCount * ligandConcentration;
+			
 			// Limit the number of receptors to bind to the actual number available
 			if (numberToBind > ligandReceptorCount) {
 				numberToBind = ligandReceptorCount;
 			}
 
 			// Bind receptors based on concentration of endogenous ligand
-			for (int idx=0; idx < (int) numberToBind; idx++) {
-				Receptor receptor = ligandReceptors.get(idx);
-				if (!receptor.isBlocked()) {
+			int receptorsBound = 0;
+			for (Receptor receptor : ligandReceptors) {
+				if (!receptor.isBlocked() && !receptor.isBound()) {
 					receptor.setBound(true);
-				} else {
-					receptor.setBound(false);
+					receptorsBound++;
+				}
+				
+				if (receptorsBound > numberToBind) {
+					break;
 				}
 			}
 		}
+	}
+	
+	private double calculateCalciumFlow(ArrayList<IonChannel> channels) {
+		
+		int count = 0;
+		for (IonChannel channel : channels) {
+			if (!channel.isInhibited()) {
+				count++;
+			}
+		};
+		
+		return (double) count / channels.size();
 	}
 	
 	/**
@@ -206,7 +272,7 @@ public class Synapse {
 	 * 
 	 * @param ligandReceptors
 	 */
-	private void processTherapeutics(ArrayList<Receptor> ligandReceptors, int ligandReceptorCount) throws Exception {
+	private void processReceptorBasedTherapeutics(ArrayList<Receptor> ligandReceptors) throws Exception {
 		
 		Map<Class<? extends Therapeutic>, ReceptorInteraction> therapeuticsMatchingThisReceptor = new HashMap<>();
 
@@ -214,7 +280,7 @@ public class Synapse {
 		Receptor receptor = ligandReceptors.get(0);
 		for (Class <? extends Therapeutic> therapeutic : therapeuticConcentrations.keySet()) {
 			Therapeutic theraInstance = therapeutic.newInstance();
-			Map<Class, ReceptorInteraction> interactions = theraInstance.getInteractions();
+			Map<Class, ReceptorInteraction> interactions = theraInstance.getReceptorInteractions();
 			ReceptorInteraction interact = interactions.get(receptor.getClass());
 			
 			if (interact != null) {
@@ -233,13 +299,18 @@ public class Synapse {
 			case ANTAGONIST:
 				antAgonizeReceptors(ligandReceptors, therapeuticConcentration);
 				break;
+			default:
+				break;
 			}
 		}
 	}
 
 	private void agonizeReceptors(ArrayList<Receptor> ligandReceptors, double therapeuticConcentration) {
 		
-		
+		int receptorsToBind = (int) (ligandReceptors.size() * therapeuticConcentration);
+		for (int idx=0; idx < receptorsToBind; idx++) {
+			ligandReceptors.get(idx).setBound(true);
+		}
 	}
 
 	private void antAgonizeReceptors(ArrayList<Receptor> ligandReceptors, double therapeuticConcentration) {
@@ -250,10 +321,53 @@ public class Synapse {
 		}
 	}
 	
+	private void processChannelBasedTherapeutics(ArrayList<IonChannel> channels) throws Exception {
+		
+		Map<Class<? extends Therapeutic>, ChannelInteraction> therapeuticsMatchingThisChannel = new HashMap<>();
+
+		// Check to see if any therapeutic in the synapse applies to this kind of receptor
+		IonChannel channel = channels.get(0);
+		for (Class <? extends Therapeutic> therapeutic : preSynapticConcentrations.keySet()) {
+			Therapeutic theraInstance = therapeutic.newInstance();
+			Map<Class, ChannelInteraction> interactions = theraInstance.getChannelInteractions();
+			ChannelInteraction interact = interactions.get(channel.getClass());
+			
+			if (interact != null) {
+				therapeuticsMatchingThisChannel.put(therapeutic, interact);
+			}
+		}
+		
+		// Now that we know which therapeutics match this channel type, distribute the action
+		for (Class<? extends Therapeutic> therapeutic : therapeuticsMatchingThisChannel.keySet()) {
+			double therapeuticConcentration = preSynapticConcentrations.get(therapeutic);
+			ChannelInteraction interaction = therapeuticsMatchingThisChannel.get(therapeutic);
+			switch(interaction) {
+			case INHIBITOR:
+				inhibitChannels(channels, therapeuticConcentration);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	
+	private void inhibitChannels(ArrayList<IonChannel> channels, double therapeuticConcentration) {
+		
+		int channelsToInhibit = (int) (channels.size() * therapeuticConcentration);
+		for (int idx=0; idx < channelsToInhibit; idx++) {
+			channels.get(idx).setInhibited(true);
+		}
+	}
+
 	/**
 	 * @return
 	 */
 	Neuron getNext() {
 		return next;
+	}
+
+	public void setPreSynapticConcentration(Class<? extends Therapeutic> therapeutic, double concentration) {
+		
+		preSynapticConcentrations.put(therapeutic, concentration);
 	}
 }

@@ -6,4 +6,19 @@ package com.stuartmorse.neural.ionchannel;
  */
 public abstract class IonChannel {
 
+	private boolean inhibited = false;
+	
+	/**
+	 * @return
+	 */
+	public boolean isInhibited() {
+		return inhibited;
+	};
+
+	/**
+	 * @param bound
+	 */
+	public void setInhibited(boolean inhibited) {
+		this.inhibited = inhibited;
+	}
 }

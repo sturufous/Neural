@@ -6,12 +6,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import com.stuartmorse.neural.ionchannel.CAMPIonChannel;
+import com.stuartmorse.neural.ionchannel.VGCalciumIonChannel;
 import com.stuartmorse.neural.neuron.Neuron;
 import com.stuartmorse.neural.neuron.PNSNeuron;
 import com.stuartmorse.neural.neuron.Synapse;
+import com.stuartmorse.neural.receptor.GABAAReceptor;
 import com.stuartmorse.neural.receptor.NMDAReceptor;
 import com.stuartmorse.neural.therapeutics.Alcohol;
+import com.stuartmorse.neural.therapeutics.Dextromethorphan;
 import com.stuartmorse.neural.therapeutics.GabaPentin;
+import com.stuartmorse.neural.therapeutics.NMethylDAspartate;
 
 /**
  * @author Stuart Morse 2018
@@ -40,9 +44,12 @@ public class NeuralRunner {
 			if (prev != null) {
 				Synapse synapse = new Synapse(prev, next);
 				synapse.addReceptors(60, LigandType.GLUTAMATE, NMDAReceptor.class);
-				//synapse.addReceptors(9, LigandType.GABA, GABAAReceptor.class);
-				synapse.setTherapeuticConcentration(Alcohol.class, 0.16);
+				//synapse.addReceptors(14, LigandType.GABA, GABAAReceptor.class);
+				synapse.setTherapeuticConcentration(NMethylDAspartate.class, 0.16);
+				synapse.addPreSynapticIonChannels(100, IonChannelType.VGC_IONCHANNEL, VGCalciumIonChannel.class);
 				synapse.addSynapticVesicles(LigandType.GLUTAMATE, 8);
+				synapse.setPreSynapticConcentration(GabaPentin.class, 0.2);
+				//synapse.addSynapticVesicles(LigandType.GABA, 8);
 				next.addCNGIonChannels(960, CAMPIonChannel.class);
 				prev.setTailSynapse(synapse);
 				next.setHeadSynapse(synapse);
@@ -75,16 +82,18 @@ public class NeuralRunner {
 		// Create dummy synapse to get the ball rolling
 		Synapse initialSynapse = new Synapse(null, head);
 
-		initialSynapse.setTherapeuticConcentration(Alcohol.class, 0.1);
-		initialSynapse.setTherapeuticConcentration(GabaPentin.class, 0.25);
+		initialSynapse.setTherapeuticConcentration(Dextromethorphan.class, 0.1);
 		initialSynapse.addSynapticVesicles(LigandType.GLUTAMATE, 8);
+		initialSynapse.addPreSynapticIonChannels(100, IonChannelType.VGC_IONCHANNEL, VGCalciumIonChannel.class);
+		initialSynapse.setPreSynapticConcentration(GabaPentin.class, 0.2);
 		// initialSynapse.addSynapticVesicles(LigandType.GABA, 13);
 
 		initialSynapse.addReceptors(60, LigandType.GLUTAMATE, NMDAReceptor.class);
 		head.addCNGIonChannels(960, CAMPIonChannel.class);
+		initialSynapse.setTherapeuticConcentration(NMethylDAspartate.class, 0.16);
 		//initialSynapse.addReceptors(20, LigandType.GABA, GABAAReceptor.class);
 
-		initialSynapse.fuseVesicles(Voltage.FIRING_THRESHOLD.getValue());
+		initialSynapse.transduceSignal(Voltage.FIRING_THRESHOLD.getValue());
 		head.setHeadSynapse(initialSynapse);
 		internalVoltage = head.epspController(initialSynapse);
 	}

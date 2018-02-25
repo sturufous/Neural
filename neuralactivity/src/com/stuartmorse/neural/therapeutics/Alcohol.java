@@ -7,7 +7,7 @@ public class Alcohol extends Therapeutic implements GabaAgonist, NMDAAntagonist 
 
 	public Alcohol() {
 		
-		interactions.put(GABAAReceptor.class, ReceptorInteraction.AGONIST);
-		interactions.put(NMDAReceptor.class, ReceptorInteraction.ANTAGONIST);
+		receptorInteractions.put(GABAAReceptor.class, ReceptorInteraction.AGONIST);
+		receptorInteractions.put(NMDAReceptor.class, ReceptorInteraction.ANTAGONIST);
 	}
 }

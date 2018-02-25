@@ -43,5 +43,4 @@ public abstract class Receptor {
 	public void setBlocked(boolean bound) {
 		this.blocked = bound;
 	}
-
 }
