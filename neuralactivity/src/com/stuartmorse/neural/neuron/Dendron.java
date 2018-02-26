@@ -89,7 +89,7 @@ public abstract class Dendron {
 		} else {
 			message.append("EPSP Failed");
 		}
-		message.append(" chain position: " + myNeuron.chainPosition + ", potential: " + round(potential, 3));
+		message.append(" chain position: " + myNeuron.chainPosition + ", potential: " + round(potential, 3) + " Volts");
 		System.out.println(message.toString());
 	}
 	

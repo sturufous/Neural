@@ -2,6 +2,6 @@ package com.stuartmorse.neural;
 
 public enum IonChannelType {
 	
-	VGC_IONCHANNEL,
-	VGS_IONCHANNEL;
+	VGCA_ION_CHANNEL,
+	VGNA_ION_CHANNEL;
 }

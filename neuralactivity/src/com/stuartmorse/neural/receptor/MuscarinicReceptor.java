@@ -7,7 +7,7 @@ import com.stuartmorse.neural.Voltage;
  * @author Stuart Morse
  *
  */
-public class MuscarinicReceptor extends MetabotropicReceptor implements AcetylCholineReceptor {
+public class MuscarinicReceptor extends MetabotropicReceptor implements AcetylCholineReceptor, TransductionReceptor {
 
 	private static final LigandType ligand = LigandType.ACETYLCHOLINE;
 

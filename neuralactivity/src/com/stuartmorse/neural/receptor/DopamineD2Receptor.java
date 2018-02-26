@@ -2,7 +2,7 @@ package com.stuartmorse.neural.receptor;
 
 import com.stuartmorse.neural.Voltage;
 
-public class DopamineD2Receptor extends MetabotropicReceptor implements CatecholamineReceptor {
+public class DopamineD2Receptor extends MetabotropicReceptor implements CatecholamineReceptor, TransductionReceptor {
 
 	@Override
 	public double getVoltageIncrement() {

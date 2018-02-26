@@ -1,6 +1,6 @@
 package com.stuartmorse.neural.receptor;
 
-public class MuOpioidReceptor extends MetabotropicReceptor implements OpioidReceptor {
+public class MuOpioidReceptor extends MetabotropicReceptor implements OpioidReceptor, TransductionReceptor {
 
 	@Override
 	public double getVoltageIncrement() {

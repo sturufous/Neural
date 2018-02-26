@@ -11,8 +11,13 @@ import com.stuartmorse.neural.Concentration;
 import com.stuartmorse.neural.IonChannelType;
 import com.stuartmorse.neural.LigandType;
 import com.stuartmorse.neural.Voltage;
+import com.stuartmorse.neural.hormones.Androgen;
+import com.stuartmorse.neural.hormones.Testosterone;
 import com.stuartmorse.neural.ionchannel.IonChannel;
+import com.stuartmorse.neural.receptor.AndrogenReceptor;
+import com.stuartmorse.neural.receptor.DopamineD2Receptor;
 import com.stuartmorse.neural.receptor.Receptor;
+import com.stuartmorse.neural.receptor.TransductionReceptor;
 import com.stuartmorse.neural.therapeutics.GabaPentin;
 import com.stuartmorse.neural.therapeutics.ReceptorInteraction;
 import com.stuartmorse.neural.therapeutics.Therapeutic;
@@ -216,17 +221,17 @@ public class Synapse {
 		// spike amplitude. Attempt to propagate signal over synapse.
 		for (LigandType ligand : vesicles.keySet()) {
 			Set<SynapticVesicle> ligandVesicles = vesicles.get(ligand);
-			
-			// Use matching ligand concentration to distribute bindings across receptor set.
 			ArrayList<Receptor> ligandReceptors = receptors.get(ligand);
-			int ligandReceptorCount = ligandReceptors.size();
-
+			
 			try {
 				processReceptorBasedTherapeutics(ligandReceptors);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+
+			// Use matching ligand concentration to distribute bindings across receptor set.
+			int ligandReceptorCount = ligandReceptors.size();
 
 			// BindingProbability contains the number of receptors to bind. This will ultimately
 			// be affected by the concentration of any ligand-related antagonists.
@@ -237,11 +242,11 @@ public class Synapse {
 			if (numberToBind > ligandReceptorCount) {
 				numberToBind = ligandReceptorCount;
 			}
-
+			
 			// Bind receptors based on concentration of endogenous ligand
 			int receptorsBound = 0;
 			for (Receptor receptor : ligandReceptors) {
-				if (!receptor.isBlocked() && !receptor.isBound()) {
+				if (!receptor.isBlocked() && !receptor.isBound() && receptor instanceof TransductionReceptor) {
 					receptor.setBound(true);
 					receptorsBound++;
 				}
@@ -295,6 +300,9 @@ public class Synapse {
 			switch(interaction) {
 			case AGONIST:
 				agonizeReceptors(ligandReceptors, therapeuticConcentration);
+				if (ligandReceptors.get(0) instanceof AndrogenReceptor) {
+					expressDopamineD2MRNA();
+				}
 				break;
 			case ANTAGONIST:
 				antAgonizeReceptors(ligandReceptors, therapeuticConcentration);
@@ -319,6 +327,12 @@ public class Synapse {
 		for (int idx=0; idx < receptorsToBlock; idx++) {
 			ligandReceptors.get(idx).setBlocked(true);
 		}
+	}
+	
+	private void expressDopamineD2MRNA() {
+		// At this point some of the D2 receptors are bound, so we can ultimately do something 
+		// with that information. For now, just bump up the receptor count.
+		addReceptors(20, LigandType.DOPAMINE, DopamineD2Receptor.class);
 	}
 	
 	private void processChannelBasedTherapeutics(ArrayList<IonChannel> channels) throws Exception {

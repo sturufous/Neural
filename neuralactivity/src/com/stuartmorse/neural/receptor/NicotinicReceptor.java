@@ -7,7 +7,7 @@ import com.stuartmorse.neural.Voltage;
  * @author Stuart Morse
  *
  */
-public class NicotinicReceptor extends IonotropicReceptor implements AcetylCholineReceptor {
+public class NicotinicReceptor extends IonotropicReceptor implements AcetylCholineReceptor, TransductionReceptor {
 
 	private static final LigandType ligand = LigandType.ACETYLCHOLINE;
 

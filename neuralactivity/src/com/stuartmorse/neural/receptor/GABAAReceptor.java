@@ -7,7 +7,7 @@ import com.stuartmorse.neural.Voltage;
  * @author Stuart Morse
  *
  */
-public class GABAAReceptor extends IonotropicReceptor implements GABAReceptor {
+public class GABAAReceptor extends IonotropicReceptor implements GABAReceptor, TransductionReceptor {
 
 	private static final LigandType ligand = LigandType.GABA;
 
