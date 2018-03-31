@@ -3,6 +3,7 @@ package com.stuartmorse.neural.neuron;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -199,7 +200,7 @@ public class Synapse {
 	 */
 	public void transduceSignal(double spikeAmplitude) {
 
-		ArrayList<IonChannel> ionChannels = null;
+		List<IonChannel> ionChannels = new ArrayList<>();
 		
 		for (IonChannelType channelType : preSynaptic.keySet()) {
 			
@@ -258,16 +259,16 @@ public class Synapse {
 		}
 	}
 	
-	private double calculateCalciumFlow(ArrayList<IonChannel> channels) {
+	private double calculateCalciumFlow(List<IonChannel> ionChannels) {
 		
 		int count = 0;
-		for (IonChannel channel : channels) {
+		for (IonChannel channel : ionChannels) {
 			if (!channel.isInhibited()) {
 				count++;
 			}
 		};
 		
-		return (double) count / channels.size();
+		return (double) count / ionChannels.size();
 	}
 	
 	/**
@@ -335,7 +336,7 @@ public class Synapse {
 		addReceptors(20, LigandType.DOPAMINE, DopamineD2Receptor.class);
 	}
 	
-	private void processChannelBasedTherapeutics(ArrayList<IonChannel> channels) throws Exception {
+	private void processChannelBasedTherapeutics(List<IonChannel> channels) throws Exception {
 		
 		Map<Class<? extends Therapeutic>, ChannelInteraction> therapeuticsMatchingThisChannel = new HashMap<>();
 
@@ -365,7 +366,7 @@ public class Synapse {
 		}
 	}
 	
-	private void inhibitChannels(ArrayList<IonChannel> channels, double therapeuticConcentration) {
+	private void inhibitChannels(List<IonChannel> channels, double therapeuticConcentration) {
 		
 		int channelsToInhibit = (int) (channels.size() * therapeuticConcentration);
 		for (int idx=0; idx < channelsToInhibit; idx++) {

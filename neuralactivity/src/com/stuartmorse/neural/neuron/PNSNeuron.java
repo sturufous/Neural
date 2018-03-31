@@ -1,6 +1,5 @@
 package com.stuartmorse.neural.neuron;
 
-import com.stuartmorse.neural.Voltage;
 import com.stuartmorse.neural.ionchannel.IonChannel;
 
 /**
@@ -41,8 +40,9 @@ public final class PNSNeuron extends Neuron {
 	 * @see com.stuartmorse.neuron.Neuron#getExternalSodiumPotential()
 	 */
 	double getExternalSodiumPotential() {
-		return externalSodiumPotential;
+		return this.externalSodiumPotential;
 	}
+	
 	
 	/*
 	 * (non-Javadoc)

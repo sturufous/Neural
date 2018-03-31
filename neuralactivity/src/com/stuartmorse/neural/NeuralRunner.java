@@ -5,20 +5,13 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import com.stuartmorse.neural.hormones.Testosterone;
 import com.stuartmorse.neural.ionchannel.CAMPIonChannel;
 import com.stuartmorse.neural.ionchannel.VGCalciumIonChannel;
 import com.stuartmorse.neural.neuron.Neuron;
 import com.stuartmorse.neural.neuron.PNSNeuron;
 import com.stuartmorse.neural.neuron.Synapse;
-import com.stuartmorse.neural.receptor.AndrogenReceptor;
 import com.stuartmorse.neural.receptor.DopamineD2Receptor;
-import com.stuartmorse.neural.receptor.GABAAReceptor;
-import com.stuartmorse.neural.receptor.NMDAReceptor;
-import com.stuartmorse.neural.therapeutics.Alcohol;
-import com.stuartmorse.neural.therapeutics.Dextromethorphan;
 import com.stuartmorse.neural.therapeutics.GabaPentin;
-import com.stuartmorse.neural.therapeutics.NMethylDAspartate;
 
 /**
  * @author Stuart Morse 2018
@@ -31,6 +24,9 @@ public class NeuralRunner {
 	private static Neuron prev = null;
 
 	/**
+	//synapse.addReceptors(50, LigandType.TESTOSTERONE, AndrogenReceptor.class);
+	//synapse.setTherapeuticConcentration(Testosterone.class, 0.5);
+	//synapse.addSynapticVesicles(LigandType.TESTOSTERONE, 8);
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -46,14 +42,11 @@ public class NeuralRunner {
 			// Skip the head. Create initial synapse for head in neuralBeat().
 			if (prev != null) {
 				Synapse synapse = new Synapse(prev, next);
-				synapse.addReceptors(60, LigandType.DOPAMINE, DopamineD2Receptor.class);
-				synapse.addReceptors(50, LigandType.TESTOSTERONE, AndrogenReceptor.class);
-				synapse.setTherapeuticConcentration(Testosterone.class, 0.5);
+				synapse.addReceptors(70, LigandType.DOPAMINE, DopamineD2Receptor.class);
 				synapse.addSynapticVesicles(LigandType.DOPAMINE, 10);
-				synapse.addSynapticVesicles(LigandType.TESTOSTERONE, 8);
+				//synapse.setPreSynapticConcentration(GabaPentin.class, 0.35);
 				
 				synapse.addPreSynapticIonChannels(100, IonChannelType.VGCA_ION_CHANNEL, VGCalciumIonChannel.class);
-				//synapse.setPreSynapticConcentration(GabaPentin.class, 0.3);
 				next.addCNGIonChannels(960, CAMPIonChannel.class);
 				prev.setTailSynapse(synapse);
 				next.setHeadSynapse(synapse);
@@ -88,12 +81,10 @@ public class NeuralRunner {
 
 		initialSynapse.addSynapticVesicles(LigandType.DOPAMINE, 10);
 		initialSynapse.addPreSynapticIonChannels(100, IonChannelType.VGCA_ION_CHANNEL, VGCalciumIonChannel.class);
-
 		initialSynapse.addReceptors(60, LigandType.DOPAMINE, DopamineD2Receptor.class);
+		
 		head.addCNGIonChannels(960, CAMPIonChannel.class);
-		initialSynapse.addReceptors(50, LigandType.TESTOSTERONE, AndrogenReceptor.class);
-		initialSynapse.setTherapeuticConcentration(Testosterone.class, 0.5);
-		initialSynapse.addSynapticVesicles(LigandType.TESTOSTERONE, 8);
+		//initialSynapse.setPreSynapticConcentration(GabaPentin.class, 0.40);
 
 		initialSynapse.transduceSignal(Voltage.FIRING_THRESHOLD.getValue());
 		head.setHeadSynapse(initialSynapse);

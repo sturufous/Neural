@@ -2,6 +2,7 @@ package com.stuartmorse.neural.receptor;
 
 import com.stuartmorse.neural.LigandType;
 import com.stuartmorse.neural.Voltage;
+import com.stuartmorse.neural.receptor.AcetylCholineReceptor;
 
 /**
  * @author Stuart Morse

@@ -19,7 +19,7 @@ public class Dendrite {
 	}
 
 	/**
-	 * Receptors are stored in a mapped that is keyed by ligand type. An ArrayList of receptors is 
+	 * Receptors are stored in a map that is keyed by ligand type. An ArrayList of receptors is 
 	 * associated with each ligand type. This method calculates the total flow potential from a
 	 * synapse into the dendrite based on whether the receptor is bound (activated) and its voltage
 	 * contribution. Receptors that stimulate (e.g. NMDA and Nicotinic) add to the voltage within

@@ -6,9 +6,11 @@
 /Users/stuartmorse/workspace/Neural/neuralactivity/src/com/stuartmorse/neural/ionchannel/VGSodiumIonChannel.java
 /Users/stuartmorse/workspace/Neural/neuralactivity/src/com/stuartmorse/neural/therapeutics/Seroquel.java
 /Users/stuartmorse/workspace/Neural/neuralactivity/src/com/stuartmorse/neural/therapeutics/GabaPentin.java
+/Users/stuartmorse/workspace/Neural/neuralactivity/src/com/stuartmorse/neural/receptor/AcetylCholineReceptor.java
 /Users/stuartmorse/workspace/Neural/neuralactivity/src/com/stuartmorse/neural/therapeutics/Benzodiazepine.java
 /Users/stuartmorse/workspace/Neural/neuralactivity/src/com/stuartmorse/neural/receptor/MuscarinicReceptor.java
 /Users/stuartmorse/workspace/Neural/neuralactivity/src/com/stuartmorse/neural/therapeutics/Therapeutic.java
+/Users/stuartmorse/workspace/Neural/neuralactivity/src/com/stuartmorse/neural/receptor/TransductionReceptor.java
 /Users/stuartmorse/workspace/Neural/neuralactivity/src/com/stuartmorse/neural/ChannelInteraction.java
 /Users/stuartmorse/workspace/Neural/neuralactivity/src/com/stuartmorse/neural/therapeutics/Dextromethorphan.java
 /Users/stuartmorse/workspace/Neural/neuralactivity/src/com/stuartmorse/neural/ionchannel/CGMPIonChannel.java
@@ -47,7 +49,6 @@
 /Users/stuartmorse/workspace/Neural/neuralactivity/src/com/stuartmorse/neural/ionchannel/CyclicNucleotide.java
 /Users/stuartmorse/workspace/Neural/neuralactivity/src/com/stuartmorse/neural/receptor/CatecholamineReceptor.java
 /Users/stuartmorse/workspace/Neural/neuralactivity/src/com/stuartmorse/neural/neuron/GenericNeuron.java
-/Users/stuartmorse/workspace/Neural/neuralactivity/src/com/stuartmorse/neural/receptor/AcetyleCholineReceptor.java
 /Users/stuartmorse/workspace/Neural/neuralactivity/src/com/stuartmorse/neural/receptor/Receptor.java
 /Users/stuartmorse/workspace/Neural/neuralactivity/src/com/stuartmorse/neural/neuron/IonotropicDendron.java
 /Users/stuartmorse/workspace/Neural/neuralactivity/src/com/stuartmorse/neural/NeuralRunner.java

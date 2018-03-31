@@ -107,5 +107,4 @@ public class NeuralSimDefaults {
 	public void setVesicleCount(String vesicleCount) {
 		this.vesicleCount = new Integer(vesicleCount);
 	}
-
 }

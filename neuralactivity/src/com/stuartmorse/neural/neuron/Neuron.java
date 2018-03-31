@@ -8,7 +8,7 @@ public abstract class Neuron {
 	final int chainPosition;
 	final Axon axon;
 	Dendron dendron;
-
+	
 	/**
 	 * @param dendrites
 	 * @param nodes

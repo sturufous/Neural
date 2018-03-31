@@ -40,8 +40,10 @@ public class MetabotropicDendron extends Dendron {
 		// Nucleotide concentration is a function of totalFlowPotential so no need to include
 		// it when calculating potential here. Only need to consider how many GNG Ion Channels
 		// there are to enable Sodium Ion flow.
+		
+		double sodiumPotential = myNeuron.getExternalSodiumPotential();
 		potential = totalFlowPotential
-				* (myNeuron.getExternalSodiumPotential()
+				* (sodiumPotential
 						* (cngIonChannelCount * 0.001))
 				+ Voltage.RESTING_POTENTIAL.getValue();
 
